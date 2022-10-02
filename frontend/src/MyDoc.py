@@ -110,7 +110,7 @@ st.set_page_config(
     page_icon="👋",
 )
 
-st.title('My Doctor Application')
+st.title('BridgeDoc')
 st.subheader('Describe your symptoms to find plausible illnesses')
 
 col1, col2, col3 = st.columns(3)
