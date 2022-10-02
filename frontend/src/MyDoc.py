@@ -85,9 +85,7 @@ def generate_hashtags(input):
     getSymps = getTopLabels(response, n)
     # getSymps returns a list of 3 objects [(symptom1:confidence1),(symptom2:confidence2),(symptom3:confidence3)]
 
-    newInput=""
-    for i in range(n):
-        newInput += getSymps[i][0]
+    newInput=''.join(str(x) for x in getSymps)
 
     newResponse: cohere.classify.Classifications
 
