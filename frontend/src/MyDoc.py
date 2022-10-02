@@ -85,16 +85,18 @@ def generate_hashtags(input):
     getSymps = getTopLabels(response, n)
     # getSymps returns a list of 3 objects [(symptom1:confidence1),(symptom2:confidence2),(symptom3:confidence3)]
 
+    newInput=""
+    for i in range(n):
+        newInput += getSymps[i]
+
     newResponse: cohere.classify.Classifications
 
-    """ TODO @Krusna and @Dan
-    write code to get the response for the diseases 
-    
-    make it return a variable called newResponse
-    """
+    newResponse = co.classify(
+        model='medium',
+        inputs=[newInput],
+        examples=[Example("fatigue, tussis, fever, breathlessness", "Bronchial Asthma"), Example("tussis, fever", "Bronchial Asthma"), Example("tussis, fever, breathlessness", "Bronchial Asthma"), Example("tussis, fever, breathlessness", "Bronchial Asthma"), Example("fatigue, breathlessness", "Bronchial Asthma"), Example("fatigue, yellowish skin, nausea", "Hepatitis C"), Example("fatigue, yellowish skin", "Hepatitis C"), Example("yellowish skin, nausea", "Hepatitis C"), Example("fatigue, nausea", "Hepatitis C"), Example("nausea", "Hepatitis C"), Example("yellowish skin", "Hepatitis C"), Example("fatigue, weight loss, mood swings", "Hypothyroidism"), Example("fatigue", "Hypothyroidism"), Example("weight loss, mood swings", "Hypothyroidism"), Example("fatigue, mood swings", "Hypothyroidism"), Example("mood swings", "Hypothyroidism"), Example("chills, vomiting, fever", "Malaria"), Example("chills, vomiting, fever", "Malaria"), Example("vomiting, fever, headache", "Malaria"), Example("vomiting, chills, headache", "Malaria"), Example("vomiting, fever", "Malaria"), Example("vomiting, fever", "Malaria"), Example("fatigue, fever, breathlessness, tussis", "Pneumonia"), Example("fatigue, fever", "Pneumonia"), Example("breathlessness, tussis", "Pneumonia"), Example("fatigue, tussis", "Pneumonia"), Example("breathlessness, tussis, fever", "Pneumonia"), Example("chills, fatigue, fever", "Typhoid"), Example("chills, fatigue", "Typhoid"), Example("chills, fever", "Typhoid"), Example("fatigue, chills, nausea", "Typhoid"), Example("vomiting, chills, headache", "Typhoid")])
 
-    # getDiseases = getTopLabels(newResponse, m)
-    getDiseases = [("symptom1", "confidence1"), ("symptom2", "confidence2"), ("symptom3", "confidence3")]
+    getDiseases = getTopLabels(newResponse, m)
 
     for i in range(n):
         st.session_state[i] = getSymps[i]
@@ -104,7 +106,6 @@ def generate_hashtags(input):
 
     global isSubmitted
     isSubmitted = True
-
 
 st.set_page_config(
     page_title="Hello",
