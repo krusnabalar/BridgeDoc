@@ -1,42 +1,56 @@
 import streamlit as st
-import streamlit.components.v1 as components
+import cohere
+from dotenv import load_dotenv
+import os
 
-# bootstrap 4 collapse example
-components.html(
-    """
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <div id="accordion">
-      <div class="card">
-        <div class="card-header" id="headingOne">
-          <h5 class="mb-0">
-            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-            Collapsible Group Item #1
-            </button>
-          </h5>
-        </div>
-        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-          <div class="card-body">
-            Collapsible Group Item #1 content
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header" id="headingTwo">
-          <h5 class="mb-0">
-            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-            Collapsible Group Item #2
-            </button>
-          </h5>
-        </div>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-          <div class="card-body">
-            Collapsible Group Item #2 content
-          </div>
-        </div>
-      </div>
-    </div>
-    """,
-    height=600,
-)
+# page_bg = """
+# <style>
+# [data-testid="stAppViewContainer"]{
+# background-color: #e5e5f7;
+# opacity: 0.8;
+# background-image: radial-gradient(#444cf7 0.5px, #e5e5f7 0.5px);
+# background-size: 10px 10px;
+# }
+# </style>
+# """
+#
+# st.markdown(page_bg,unsafe_allow_html=True)
+
+load_dotenv()
+
+co = cohere.Client(os.getenv('COHERE_API_KEY'))
+
+# Initialization
+
+if 'output' not in st.session_state:
+    st.session_state['output'] = 'Output:'
+
+
+def generate_hashtags(input):
+    if len(input) == 0:
+        return None
+    response = co.generate(
+        model='large',
+        prompt='Given a post, this program will generate relevant hashtags.\n\nPost: Why are there no country songs about software engineering\nHashtag: #softwareengineering #code \n--\nPost: Your soulmate is in the WeWork you decided not to go to\nHashtag: #wework #work \n--\nPost: If shes talking to you once a day im sorry bro thats not flirting that standup\nHashtag: #standup #funny \n--\nPost: {}\nHashtags:'.format(
+            input),
+        max_tokens=20,
+        temperature=0.5,
+        k=0,
+        p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        stop_sequences=["--"],
+        return_likelihoods='NONE')
+
+    st.session_state['output'] = response.generations[0].text
+    st.balloons()
+
+
+st.title('Hashtag Generator')
+st.subheader('Boilerplate for Co:here, Streamlit, Streamlit Cloud')
+st.write('''This is a simple **Streamlit** app that generates hashtags from a small Post title caption.''')
+
+input = st.text_area('Enter your post title caption here', height=100)
+st.button('Generate Hashtags', on_click=generate_hashtags(input))
+st.markdown('<style>body{background-color:#F8F6E3}</style>',unsafe_allow_html=True)
+st.write(st.session_state.output)
