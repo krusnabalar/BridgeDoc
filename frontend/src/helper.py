@@ -1,7 +1,9 @@
 import numpy as np
 from cohere.classify import Classifications
+from cohere.classify import Example
 
-def getTopSymptoms(response: Classifications, n: int) -> list:
+
+def getTopLabels(response: Classifications, n: int) -> list:
     x = response.classifications
     dictionary = {}
     values = []

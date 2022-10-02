@@ -3,7 +3,7 @@ import streamlit as st
 from cohere.classify import Example
 from dotenv import load_dotenv
 
-from helper import getTopSymptoms
+from helper import getTopLabels
 
 load_dotenv()
 
@@ -25,6 +25,7 @@ if 'output' not in st.session_state:
     st.session_state['output'] = 'Output:'
 
 n = 3
+m = 3
 isSubmitted = False
 
 
@@ -81,10 +82,25 @@ def generate_hashtags(input):
                   Example("Stomach doing flip flops or turning somersaults", "nausea"),
                   Example("Butterflies? I have a whole swarm of bees in there.", "nausea")])
 
-    getSymps = getTopSymptoms(response, n)
+    getSymps = getTopLabels(response, n)
+    # getSymps returns a list of 3 objects [(symptom1:confidence1),(symptom2:confidence2),(symptom3:confidence3)]
+
+    newResponse: cohere.classify.Classifications
+
+    """ TODO @Krusna and @Dan
+    write code to get the response for the diseases 
+    
+    make it return a variable called newResponse
+    """
+
+    # getDiseases = getTopLabels(newResponse, m)
+    getDiseases = [("symptom1", "confidence1"), ("symptom2", "confidence2"), ("symptom3", "confidence3")]
 
     for i in range(n):
         st.session_state[i] = getSymps[i]
+
+    for j in range(m):
+        st.session_state[n + j] = getDiseases[j]
 
     global isSubmitted
     isSubmitted = True
@@ -98,14 +114,20 @@ st.set_page_config(
 st.title('My Doctor Application')
 st.subheader('Describe your symptoms to find plausible illnesses')
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     input = st.text_area('Enter your symptoms here', height=200)
     st.button('Submit', on_click=generate_hashtags(input))
 
 with col2:
-    st.write("Classifications")
+    st.write("Symptoms")
     if isSubmitted is True:
         for i in range(n):
-            st.write(str(st.session_state[i][1]) + ":" + str(st.session_state[i][0]))
+            st.write(str(st.session_state[i][1]) + " : " + str(st.session_state[i][0]))
+
+with col3:
+    st.write("Diseases")
+    if isSubmitted is True:
+        for j in range(n, n + m):
+            st.write(str(st.session_state[j][1]) + " : " + str(st.session_state[j][0]))
