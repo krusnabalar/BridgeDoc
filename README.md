@@ -60,4 +60,4 @@ Researching the medical problem-space, we found literature highlighting the prob
 co:here Classify, co:here Generate, Python, Streamlit
 
 ## Try it out
-Website: https://krusnabalar-voyagers-frontendsrcmydoc-p9gs5h.streamlitapp.com/
+Website: https://krusnabalar-bridgedoc-frontendsrcmydoc-jwe73t.streamlitapp.com/
