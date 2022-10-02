@@ -6,10 +6,19 @@ load_dotenv()
 co = cohere.Client("qfjwp1pbZawgJ6Ob8vV0REhLDUcZxWg9FrXLEh0m")
 
 # Initialization
+# page_bg_img = """
+# <style>
+# body {
+# background-image: url("https://images.unsplash.com/photo-1542281286-9e0a16bb7366");
+# background-size: cover;
+# }
+# </style>
+# """
+#
+# st.markdown(page_bg_img, unsafe_allow_html=True)
 
 if 'output' not in st.session_state:
     st.session_state['output'] = 'Output:'
-
 
 def generate_hashtags(input):
     if len(input) == 0:
@@ -29,27 +38,21 @@ def generate_hashtags(input):
 
     st.session_state['output'] = response.generations[0].text
 
-
 st.set_page_config(
     page_title="Hello",
     page_icon="👋",
 )
 
 st.title('My Doctor Application')
-st.subheader('Boilerplate for Co:here, Streamlit, Streamlit Cloud')
-st.write('''This is a simple **Streamlit** app that takes in symptoms and returns the diagnosed illness.''')
-
-input = st.text_area('Enter your post title caption here', height=200)
-st.button('Generate Hashtags', on_click=generate_hashtags(input))
+st.subheader('Describe your symptoms to find plausible illnesses')
 
 col1, col2 = st.columns(2)
 
 with col1:
-   st.header("A cat")
-   st.image("https://static.streamlit.io/examples/cat.jpg")
+    st.write("Enter your symptoms:")
+    input = st.text_area('Enter your symptoms here', height=200)
+    st.button('Generate Hashtags', on_click=generate_hashtags(input))
 
 with col2:
-   st.header("A dog")
-   st.image("https://static.streamlit.io/examples/dog.jpg")
-
-st.write(st.session_state.output)
+    st.write("Classifications")
+    st.write(st.session_state.output)
