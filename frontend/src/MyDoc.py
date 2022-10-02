@@ -87,7 +87,7 @@ def generate_hashtags(input):
 
     newInput=""
     for i in range(n):
-        newInput += getSymps[i]
+        newInput += getSymps[i][0]
 
     newResponse: cohere.classify.Classifications
 
