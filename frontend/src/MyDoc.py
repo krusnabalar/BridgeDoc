@@ -1,6 +1,10 @@
-import streamlit as st
 import cohere
+import streamlit as st
+from cohere.classify import Example
 from dotenv import load_dotenv
+
+from helper import getTopSymptoms
+
 load_dotenv()
 
 co = cohere.Client("qfjwp1pbZawgJ6Ob8vV0REhLDUcZxWg9FrXLEh0m")
@@ -20,23 +24,71 @@ co = cohere.Client("qfjwp1pbZawgJ6Ob8vV0REhLDUcZxWg9FrXLEh0m")
 if 'output' not in st.session_state:
     st.session_state['output'] = 'Output:'
 
+n = 3
+isSubmitted = False
+
+
 def generate_hashtags(input):
     if len(input) == 0:
         return None
-    response = co.generate(
-        model='large',
-        prompt='Given a post, this program will generate relevant hashtags.\n\nPost: Why are there no country songs about software engineering\nHashtag: #softwareengineering #code \n--\nPost: Your soulmate is in the WeWork you decided not to go to\nHashtag: #wework #work \n--\nPost: If shes talking to you once a day im sorry bro thats not flirting that standup\nHashtag: #standup #funny \n--\nPost: {}\nHashtags:'.format(
-            input),
-        max_tokens=20,
-        temperature=0.5,
-        k=0,
-        p=1,
-        frequency_penalty=0,
-        presence_penalty=0,
-        stop_sequences=["--"],
-        return_likelihoods='NONE')
+    n = 3
 
-    st.session_state['output'] = response.generations[0].text
+    response = co.classify(
+        model='large',
+        inputs=[input],
+        examples=[Example("feeling of being cold without an apparent cause", "chills"),
+                  Example("vibratory muscular movement", "chills"), Example("involuntary trembling", "chills"),
+                  Example("shivers ", "chills"), Example(
+                "i don\'t know what\'s wrong with me, but i feel so cold and shaky all the time.\n\nit\'s not just my hands or feet either, it\'s my whole body.\n",
+                "chills"), Example(
+                "when i get really hot (like in a hot shower) then i start shaking again because of how cold i am.\n\ni\'ve been feeling this way for about two weeks now and it doesn\'t seem to be getting any better at all!",
+                "chills"), Example(
+                "I\'ve been having a lot of those lately, and it\'s not because I\'m cold. It\'s because my body is trying to tell me something. It\'s telling me that I need to slow down, take care of myself, and get some rest. So this week has been all about taking care of myself - eating well (and by \"well\" I mean healthy), getting enough sleep, drinking lots of water...all the things you\'re supposed to do when",
+                "chills"), Example("feeling cold", "chills"),
+                  Example("I have phlegm, but it is not yellow or green. It\'s clear and white. Is that normal?",
+                          "cough"), Example("I coughed up blood", "cough"),
+                  Example("I have dry cough with no other symptoms", "cough"),
+                  Example("I have a constant dry hacking cough.\n\n", "cough"),
+                  Example("I get a persistent dry hacking cough in the morning after waking up from sleep ", "cough"),
+                  Example(
+                      "My throat feels like it is on fire all of the time.\n My chest hurts too (not as much as my throat), but still hurts enough to make it hard",
+                      "cough"), Example("it hurts to swallow anything (even water)", "cough"),
+                  Example("lack of energy,", "fatigue"), Example("excessive tiredness", "fatigue"),
+                  Example("I can\'t do this anymore", "fatigue"), Example(
+                "Basically, when your muscles are working really hard (like during exercise), they use up all their energy and start using protein in your body as fuel instead of carbohydrates or fat. This is called \"glycogen depletion\" and it can make you feel tired and weak if not replenished",
+                "fatigue"), Example("constant tiredness or weakness", "fatigue"),
+                  Example("constant state of weariness ", "fatigue"), Example("I fell down", "fatigue"),
+                  Example("extreme tiredness", "fatigue"), Example("over tired ", "fatigue"),
+                  Example("exhausted.", "fatigue"), Example("My legs keep asking me to rest", "fatigue"), Example(
+                "I don\'t think they\'re migraines. They are usually on the right side and feel like my head is being squeezed in a vise.",
+                "headache"), Example(
+                "Sometimes it feels like someone is hitting me with an axe or hammer inside my skull. It\'s not always on the same spot, either; sometimes it\'s at the back of my head, sometimes near the top or front (but never behind). The pain can be so bad that I throw up from",
+                "headache"), Example(
+                "it\'s not going away.\n\nIt\'s been there for days now, and I don\'t know what to do about it.\n\nI\'ve tried everything: Tylenol, Advil, Excedrin Migraine... nothing works!",
+                "headache"), Example(
+                "And the worst part is that my head hurts all over - in my forehead, behind my eyes, on top of my head... everywhere! It feels like someone has taken a hammer to the inside of my skull and",
+                "headache"), Example("I have a dizzying pain", "headache"),
+                  Example("The migraines would come of too much cheese or chocolate", "headache"),
+                  Example("join discomfort", "joint pain"), Example("a burst of pain in my joints", "joint pain"),
+                  Example(
+                      "I walk like my limbs don’t really belong to me and each step is a negotiation rather than an order",
+                      "joint pain"),
+                  Example("my knuckles felt too large and like they didn\'t want to bend", "joint pain"), Example(
+                "I\'ve been in a lot of pain for the past few days, and it\'s not getting better. It\'s actually getting worse. I can\'t sleep because my hip hurts so much that when I lie down on one side, it feels like someone is stabbing me with a knife in the other hip. My back hurts too, but at least that doesn\'t keep me awake at night (yet).\n\nI have an appointment with my rheumatologist tomorrow morning, and hopefully",
+                "joint pain"), Example("Don\'t show me food dont\' show me drinks", "nausea"),
+                  Example("my stomach is tumbling like a dryer...", "nausea"), Example("Sick to my stomach", "nausea"),
+                  Example("MY STOMACH IS KNOTTING", "nausea"),
+                  Example("Stomach doing flip flops or turning somersaults", "nausea"),
+                  Example("Butterflies? I have a whole swarm of bees in there.", "nausea")])
+
+    getSymps = getTopSymptoms(response, n)
+
+    for i in range(n):
+        st.session_state[i] = getSymps[i]
+
+    global isSubmitted
+    isSubmitted = True
+
 
 st.set_page_config(
     page_title="Hello",
@@ -49,10 +101,11 @@ st.subheader('Describe your symptoms to find plausible illnesses')
 col1, col2 = st.columns(2)
 
 with col1:
-    st.write("Enter your symptoms:")
     input = st.text_area('Enter your symptoms here', height=200)
-    st.button('Generate Hashtags', on_click=generate_hashtags(input))
+    st.button('Submit', on_click=generate_hashtags(input))
 
 with col2:
     st.write("Classifications")
-    st.write(st.session_state.output)
+    if isSubmitted is True:
+        for i in range(n):
+            st.write(str(st.session_state[i][1]) + ":" + str(st.session_state[i][0]))
