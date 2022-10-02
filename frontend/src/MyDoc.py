@@ -25,9 +25,7 @@ if 'output' not in st.session_state:
     st.session_state['output'] = 'Output:'
 
 n = 3
-
-for i in range(n):
-    st.session_state[i] = ["", ""]
+isSubmitted = False
 
 
 def generate_hashtags(input):
@@ -88,6 +86,9 @@ def generate_hashtags(input):
     for i in range(n):
         st.session_state[i] = getSymps[i]
 
+    global isSubmitted
+    isSubmitted = True
+
 
 st.set_page_config(
     page_title="Hello",
@@ -105,5 +106,6 @@ with col1:
 
 with col2:
     st.write("Classifications")
-    for i in range(n):
-        st.write(str(st.session_state[i][1]) + ":" + str(st.session_state[i][0]))
+    if isSubmitted is True:
+        for i in range(n):
+            st.write(str(st.session_state[i][1]) + ":" + str(st.session_state[i][0]))
