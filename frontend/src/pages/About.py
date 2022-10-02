@@ -80,5 +80,5 @@ co:here Classify, co:here Generate, Python, Streamlit
 TRY IT OUT:
 
 Website: https://krusnabalar-bridgedoc-frontendsrcmydoc-jwe73t.streamlitapp.com/
-Repo: https://github.com/krusnabalar/voyagers/
+Repo: https://github.com/krusnabalar/BridgeDoc/
 """)
