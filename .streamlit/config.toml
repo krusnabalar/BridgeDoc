@@ -1,6 +1,9 @@
 [theme]
-primaryColor="#F63366"
-backgroundColor="#FFFFF8"
-secondaryBackgroundColor="#F0F2F6"
-textColor="#262730"
-font="sans serif"
+#primaryColor="#F63366"
+#backgroundColor="#FFFFF8"
+#secondaryBackgroundColor="#F0F2F6"
+#textColor="#262730"
+#font="sans serif"
+
+backgroundColor= "#ffffff"
+background= "linear-gradient(135deg, #c44c8255 25%, transparent 25%) -10px 0/ 20px 20px, linear-gradient(225deg, #c44c82 25%, transparent 25%) -10px 0/ 20px 20px, linear-gradient(315deg, #c44c8255 25%, transparent 25%) 0px 0/ 20px 20px, linear-gradient(45deg, #c44c82 25%, #ffffff 25%) 0px 0/ 20px 20px"

@@ -1,20 +1,6 @@
 import streamlit as st
 import cohere
 from dotenv import load_dotenv
-import os
-# page_bg = """
-# <style>
-# [data-testid="stAppViewContainer"]{
-# background-color: #e5e5f7;
-# opacity: 0.8;
-# background-image: radial-gradient(#444cf7 0.5px, #e5e5f7 0.5px);
-# background-size: 10px 10px;
-# }
-# </style>
-# """
-#
-# st.markdown(page_bg,unsafe_allow_html=True)
-
 load_dotenv()
 
 co = cohere.Client("qfjwp1pbZawgJ6Ob8vV0REhLDUcZxWg9FrXLEh0m")
@@ -42,14 +28,28 @@ def generate_hashtags(input):
         return_likelihoods='NONE')
 
     st.session_state['output'] = response.generations[0].text
-    st.balloons()
 
 
-st.title('Hashtag Generator')
+st.set_page_config(
+    page_title="Hello",
+    page_icon="👋",
+)
+
+st.title('My Doctor Application')
 st.subheader('Boilerplate for Co:here, Streamlit, Streamlit Cloud')
-st.write('''This is a simple **Streamlit** app that generates hashtags from a small Post title caption.''')
+st.write('''This is a simple **Streamlit** app that takes in symptoms and returns the diagnosed illness.''')
 
-input = st.text_area('Enter your post title caption here', height=100)
+input = st.text_area('Enter your post title caption here', height=200)
 st.button('Generate Hashtags', on_click=generate_hashtags(input))
-st.markdown('<style>body{background-color:#F8F6E3}</style>',unsafe_allow_html=True)
+
+col1, col2 = st.columns(2)
+
+with col1:
+   st.header("A cat")
+   st.image("https://static.streamlit.io/examples/cat.jpg")
+
+with col2:
+   st.header("A dog")
+   st.image("https://static.streamlit.io/examples/dog.jpg")
+
 st.write(st.session_state.output)
