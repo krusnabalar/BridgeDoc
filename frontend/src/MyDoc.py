@@ -26,6 +26,8 @@ if 'output' not in st.session_state:
 
 n = 3
 
+for i in range(n):
+    st.session_state[i] = i
 
 def generate_hashtags(input):
     if len(input) == 0:
