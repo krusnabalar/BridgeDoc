@@ -2,9 +2,6 @@ import streamlit as st
 import cohere
 from dotenv import load_dotenv
 import os
-
-COHERE_API_KEY="qfjwp1pbZawgJ6Ob8vV0REhLDUcZxWg9FrXLEh0m"
-
 # page_bg = """
 # <style>
 # [data-testid="stAppViewContainer"]{
@@ -20,7 +17,7 @@ COHERE_API_KEY="qfjwp1pbZawgJ6Ob8vV0REhLDUcZxWg9FrXLEh0m"
 
 load_dotenv()
 
-co = cohere.Client(os.getenv('COHERE_API_KEY'))
+co = cohere.Client("qfjwp1pbZawgJ6Ob8vV0REhLDUcZxWg9FrXLEh0m")
 
 # Initialization
 
